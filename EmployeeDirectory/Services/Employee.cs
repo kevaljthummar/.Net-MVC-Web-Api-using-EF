@@ -8,25 +8,31 @@ namespace EmployeeDirectory.Services
 {
     public class Employee : IEmployee
     {
-        private readonly DatabaseContext db;
-        public Employee()
-        {
-            db = new DatabaseContext();
-        }
-
+        private DatabaseContext db = new DatabaseContext();
+       
         public List<Country> GetContries()
         {
-            return null;
+            var result = (from contry in db.Countries
+                         select contry).ToList();
+            return result;
         }
 
         public List<State> GetStatesByContry(int ContryId)
         {
-            return null;
+            var result = (from state in db.States
+                          where state.CountryId.Equals(ContryId)
+                          select state).ToList();
+
+            return result;
         }
 
         public List<City> GetCityByState(int StateId)
         {
-            return null;
+            var result = (from city in db.Cities
+                          where city.StateId.Equals(StateId)
+                          select city).ToList();
+
+            return result;
         }
 
         public List<Employee> GetAllEmployees()

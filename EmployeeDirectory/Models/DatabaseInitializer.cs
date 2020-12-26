@@ -6,12 +6,16 @@ using System.Web;
 
 namespace EmployeeDirectory.Models
 {
-    public class DatabaseInitializer: DropCreateDatabaseIfModelChanges<DatabaseContext>
+    public class DatabaseInitializer : DropCreateDatabaseIfModelChanges<DatabaseContext>
     {
         protected override void Seed(DatabaseContext context)
         {
             base.Seed(context);
 
+            var cityInGujarat = new List<City> {
+                new City {Name="Surat" },
+                                new City {Name= "Vadodra" }
+            };
             var cityInMaharashtra = new List<City> {
                 new City {Name="Mumbai" },
                                 new City {Name= "Pune" }
@@ -47,6 +51,9 @@ namespace EmployeeDirectory.Models
                 },
                 new  State {
                     Name="Panjab",City=cityInPanjab
+                },
+                new State {
+                    Name="Gujarat",City=cityInGujarat
                 }
             };
             Country country = new Country
