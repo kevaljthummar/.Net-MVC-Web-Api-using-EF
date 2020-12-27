@@ -19,9 +19,22 @@ namespace EmployeeDirectoryUI.Controllers
         [HttpPost]
         public ActionResult Submit(FormCollection collection)
         {
-            string name = collection.Get("txtClientName");
-            string address = collection.Get("txtAddress");
-            return View();
+            string FormType = collection.Get("formtype");
+            string Image = collection.Get("Image");
+            string FirstName = collection.Get("FirstName");
+            string LastName = collection.Get("LastName");
+            string EmailAddress = collection.Get("EmailAddress");
+            string DOB = collection.Get("DOB");
+            string Password = collection.Get("Password");
+            string Salary = collection.Get("Salary");
+            string Address = collection.Get("Address");
+            string contryDDL = collection.Get("contryDDL");
+            string stateDDL = collection.Get("stateDDL");
+            string cityDDL = collection.Get("cityDDL");
+            string ZipCode = collection.Get("ZipCode");
+            string MaritalStatus = collection.Get("MaritalStatus");
+            string gender = collection.Get("gender");
+            return RedirectToAction("Index");
         }
 
         [HttpGet]

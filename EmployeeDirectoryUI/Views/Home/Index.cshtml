@@ -23,6 +23,10 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
+                        <label for="Image">Select Profile</label>
+                        <input type="file" class="form-control" id="Image" name="Image" />
+                    </div>
+                    <div class="form-group">
                         <label for="FirstName">First Name</label>
                         <input type="text" class="form-control" id="FirstName" name="FirstName" placeholder="Enter First Name" required onkeyup="validateInputs()" maxlength="50">
                     </div>
@@ -38,20 +42,17 @@
                         <label for="DOB">DOB</label>
                         <input id="DOB" name="DOB" class="form-control">
                     </div>
-                    @*<div class="form-group">
-                            <select id="hobbies" name="hobbies" multiple>
-                                <option value="Reading">Reading</option>
-                                <option value="Singing">Singing</option>
-                                <option value="Traveling">Traveling</option>
-                            </select>
-                        </div>*@
                     <div class="form-group">
                         <label for="Password">Password</label>
-                        <input type="password" class="form-control" id="Password" name="Password" placeholder="Password">
+                        <input type="password" class="form-control" id="Password" name="Password" placeholder="Password" maxlength="50">
                     </div>
                     <div class="form-group">
                         <label for="Salary">Salary</label>
-                        <input type="number" class="form-control" id="Salary" name="Salary" placeholder="Enter Salary" step="0.01">
+                        <input type="number" class="form-control" id="Salary" name="Salary" placeholder="Enter Salary" step="0.01" min="5000">
+                    </div>
+                    <div class="form-group">
+                        <label for="Address">Address</label>
+                        <textarea class="form-control" id="Address" rows="3" name="Address" maxlength="500"></textarea>
                     </div>
                     <div class="form-group">
                         <input id="contryDDL" name="contryDDL" />
@@ -60,16 +61,12 @@
                     </div>
                     <div class="form-group">
                         <label for="ZipCode">ZipCode</label>
-                        <input type="text" class="form-control" id="ZipCode" name="ZipCode" placeholder="Enter Zipcode">
-                    </div>
-                    <div class="form-group">
-                        <label for="Address">Address</label>
-                        <textarea class="form-control" id="Address" rows="3" name="Address"></textarea>
+                        <input type="text" class="form-control" id="ZipCode" name="ZipCode" placeholder="Enter Zipcode" maxlength="6">
                     </div>
                     <div class="form-group">
                         <div class="radio">
-                            <label><input type="radio" name="gender" checked>Male</label>
-                            <label><input type="radio" name="gender">Femail</label>
+                            <label><input type="radio" name="gender" value="M" checked>Male</label>
+                            <label><input type="radio" name="gender" value="F">Femail</label>
                         </div>
                     </div>
                     <div class="form-check">
@@ -99,18 +96,6 @@
     $("#Salary").blur(function () {
         this.value = parseFloat(this.value).toFixed(2);
     });
-
-    function getSelectedValues() {
-        var selectedVal = $("#hobbies").val();
-        for (var i = 0; i < selectedVal.length; i++) {
-            function innerFunc(i) {
-                setTimeout(function () {
-                    location.href = selectedVal[i];
-                }, i * 2000);
-            }
-            innerFunc(i);
-        }
-    }
 
     function CityDropDawn(Id) {
         var CitydataSource = new kendo.data.DataSource({
