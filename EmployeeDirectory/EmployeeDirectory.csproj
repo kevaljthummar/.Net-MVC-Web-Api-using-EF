@@ -100,8 +100,8 @@
     <Compile Include="Models\DatabaseInitializer.cs" />
     <Compile Include="Models\Entity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\Employee.cs" />
-    <Compile Include="Services\IEmployee.cs" />
+    <Compile Include="Services\EmployeeServices.cs" />
+    <Compile Include="Services\IEmployeeServices.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

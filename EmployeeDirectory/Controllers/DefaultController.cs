@@ -1,4 +1,5 @@
-﻿using EmployeeDirectory.Services;
+﻿using EmployeeDirectory.Models;
+using EmployeeDirectory.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +12,13 @@ namespace EmployeeDirectory.Controllers
     public class DefaultController : ApiController
     {
         #region Fields
-        private readonly IEmployee _employee;
+        private readonly IEmployeeServices _employeeSevices;
         #endregion
 
         #region Ctor
         public DefaultController()
         {
-            _employee = new Employee();
+            _employeeSevices = new EmployeeServices();
         }
         #endregion
 
@@ -27,7 +28,7 @@ namespace EmployeeDirectory.Controllers
         {
             try
             {
-                var contrys = _employee.GetContries();
+                var contrys = _employeeSevices.GetContries();
 
                 return Request.CreateResponse(HttpStatusCode.OK, contrys.ToList());
             }
@@ -44,9 +45,9 @@ namespace EmployeeDirectory.Controllers
             try
             {
                 if (StateId == 0)
-                    return Request.CreateResponse(HttpStatusCode.InternalServerError,"Invalid State Id.");
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Invalid State Id.");
 
-                var cities = _employee.GetCityByState(StateId);
+                var cities = _employeeSevices.GetCityByState(StateId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, cities.ToList());
             }
@@ -63,11 +64,68 @@ namespace EmployeeDirectory.Controllers
             try
             {
                 if (ContryId == 0)
-                    return Request.CreateResponse(HttpStatusCode.InternalServerError, "Invalid Contry Id.");
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Invalid Contry Id.");
 
-                var states = _employee.GetStatesByContry(ContryId);
+                var states = _employeeSevices.GetStatesByContry(ContryId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, states.ToList());
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+        }
+
+        [HttpPost]
+        [Route("api/AddEmployee")]
+        public HttpResponseMessage Insert(Employee employee)
+        {
+            try
+            {
+                if (employee == null)
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Invalid Data.");
+
+                _employeeSevices.InsertEmployee(employee);
+
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+        }
+
+        [HttpPost]
+        [Route("api/UpdateEmployee")]
+        public HttpResponseMessage Update(Employee employee)
+        {
+            try
+            {
+                if (employee == null)
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Invalid Data.");
+
+                _employeeSevices.UpdateEmployee(employee);
+
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+        }
+
+        [HttpDelete]
+        [Route("api/DeleteEmployee")]
+        public HttpResponseMessage Delete(int Id)
+        {
+            try
+            {
+                if (Id == 0)
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Invalid Data.");
+
+                _employeeSevices.DeleteEmployee(Id);
+
+                return Request.CreateResponse(HttpStatusCode.OK);
             }
             catch (Exception)
             {

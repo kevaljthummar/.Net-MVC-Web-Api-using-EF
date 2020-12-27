@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using EmployeeDirectoryUI.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,6 @@ namespace EmployeeDirectoryUI.Controllers
         public ActionResult Submit(FormCollection collection)
         {
             string FormType = collection.Get("formtype");
-            string Image = collection.Get("Image");
             string FirstName = collection.Get("FirstName");
             string LastName = collection.Get("LastName");
             string EmailAddress = collection.Get("EmailAddress");
@@ -34,7 +34,70 @@ namespace EmployeeDirectoryUI.Controllers
             string ZipCode = collection.Get("ZipCode");
             string MaritalStatus = collection.Get("MaritalStatus");
             string gender = collection.Get("gender");
-            return RedirectToAction("Index");
+            string Image = collection.Get("Image");
+
+            Employee employee = new Employee()
+            {
+                FirstName = FirstName,
+                LastName = LastName,
+                Email = EmailAddress,
+                Birthdate = DateTime.Parse(DOB),
+                Password = Password,
+                salary = Convert.ToDecimal(Salary),
+                Address = Address,
+                Country = Convert.ToInt32(contryDDL),
+                State = Convert.ToInt32(stateDDL),
+                City = Convert.ToInt32(cityDDL),
+                Zipcode = ZipCode,
+                MaritalStatus = MaritalStatus == "ok" ? true : false,
+                Gender = gender,
+                Images = Image
+            };
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:44333/api/");
+
+                var FormAPI = FormType == "save" ? "AddEmployee" : "UpdateEmployee";
+
+                var responseTask = client.PostAsJsonAsync<Employee>(FormAPI, employee);
+
+                responseTask.Wait();
+
+                var result = responseTask.Result;
+
+                if (result.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        [HttpDelete]
+        public ActionResult DeleteEmployee(int Id)
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:44333/api/");
+
+                //HTTP DELETE
+                var deleteTask = client.DeleteAsync("DeleteEmployee?Id=" + Id);
+                deleteTask.Wait();
+
+                var result = deleteTask.Result;
+                if (result.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return null;
+                }
+            }
         }
 
         [HttpGet]

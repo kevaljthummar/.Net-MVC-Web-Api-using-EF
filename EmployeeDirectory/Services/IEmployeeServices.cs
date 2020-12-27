@@ -6,7 +6,7 @@ using System.Web;
 
 namespace EmployeeDirectory.Services
 {
-    public interface IEmployee
+    public interface IEmployeeServices
     {
         List<Country> GetContries();
         List<State> GetStatesByContry(int ContryId);

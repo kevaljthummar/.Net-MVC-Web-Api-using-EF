@@ -1,19 +1,20 @@
 ﻿using EmployeeDirectory.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 
 namespace EmployeeDirectory.Services
 {
-    public class Employee : IEmployee
+    public class EmployeeServices : IEmployeeServices
     {
         private DatabaseContext db = new DatabaseContext();
-       
+
         public List<Country> GetContries()
         {
             var result = (from contry in db.Countries
-                         select contry).ToList();
+                          select contry).ToList();
             return result;
         }
 
@@ -37,32 +38,53 @@ namespace EmployeeDirectory.Services
 
         public List<Employee> GetAllEmployees()
         {
-            return null;
+            var result = (from e in db.Employees
+                          select e).ToList();
+            return result;
         }
 
         public Employee GetEmployeeByEmail(string email)
         {
-            return null;
+            var result = (from e in db.Employees
+                          where e.Email.Equals(email)
+                          select e).FirstOrDefault();
+            return result;
         }
 
         public Employee GetEmployeeById(int Id)
         {
-            return null;
+            var result = db.Employees.Find(Id);
+            return result;
         }
 
         public void InsertEmployee(Employee emp)
         {
+            Employee employee = new Employee()
+            {
 
+            };
+            db.Employees.Add(employee);
+            db.SaveChanges();
         }
 
         public void UpdateEmployee(Employee emp)
         {
+            var employee = db.Employees.Find(emp.Id);
+
+            //update data code
+            employee.FirstName = emp.FirstName;
+            //update data code
+
+            db.Entry(employee).State = EntityState.Modified;
+            db.SaveChanges();
 
         }
 
         public void DeleteEmployee(int Id)
         {
-
+            var employee = db.Employees.Find(Id);
+            db.Entry(employee).State = EntityState.Deleted;
+            db.SaveChanges();
         }
 
     }
