@@ -1,0 +1,206 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="row mx-md-n5">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+        Add Employee
+    </button>
+    <div id="grid"></div>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            @using (Html.BeginForm("Submit", "Home", FormMethod.Post))
+            {
+                <input type="hidden" id="formtype" name="formtype" value="save" />
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add/Edit Detail</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="FirstName">First Name</label>
+                        <input type="text" class="form-control" id="FirstName" name="FirstName" placeholder="Enter First Name" required onkeyup="validateInputs()" maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label for="LastName">Last Name</label>
+                        <input type="text" class="form-control" id="LastName" name="LastName" placeholder="Enter Last Name" required onkeyup="validateInputs()" maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label for="EmailAddress">Email address</label>
+                        <input type="email" class="form-control" id="EmailAddress" name="EmailAddress" placeholder="Enter email" required onkeyup="validateInputs()" maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label for="DOB">DOB</label>
+                        <input id="DOB" name="DOB" class="form-control">
+                    </div>
+                    @*<div class="form-group">
+                            <select id="hobbies" name="hobbies" multiple>
+                                <option value="Reading">Reading</option>
+                                <option value="Singing">Singing</option>
+                                <option value="Traveling">Traveling</option>
+                            </select>
+                        </div>*@
+                    <div class="form-group">
+                        <label for="Password">Password</label>
+                        <input type="password" class="form-control" id="Password" name="Password" placeholder="Password">
+                    </div>
+                    <div class="form-group">
+                        <label for="Salary">Salary</label>
+                        <input type="number" class="form-control" id="Salary" name="Salary" placeholder="Enter Salary" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <input id="contryDDL" name="contryDDL" />
+                        <input id="stateDDL" name="stateDDL" />
+                        <input id="cityDDL" name="cityDDL" />
+                    </div>
+                    <div class="form-group">
+                        <label for="ZipCode">ZipCode</label>
+                        <input type="text" class="form-control" id="ZipCode" name="ZipCode" placeholder="Enter Zipcode">
+                    </div>
+                    <div class="form-group">
+                        <label for="Address">Address</label>
+                        <textarea class="form-control" id="Address" rows="3" name="Address"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <div class="radio">
+                            <label><input type="radio" name="gender" checked>Male</label>
+                            <label><input type="radio" name="gender">Femail</label>
+                        </div>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="MaritalStatus" name="MaritalStatus">
+                        <label class="form-check-label" for="MaritalStatus">Married</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" id="SubmitBtn">Save changes</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function get_age(born, now) {
+        var part = born.split("/");
+        var birthday = new Date(now.getFullYear(), part[1], part[0]);
+        if (now >= birthday)
+            return now.getFullYear() - part[2];
+        else
+            return now.getFullYear() - part[2] - 1;
+    }
+
+    $("#Salary").blur(function () {
+        this.value = parseFloat(this.value).toFixed(2);
+    });
+
+    function getSelectedValues() {
+        var selectedVal = $("#hobbies").val();
+        for (var i = 0; i < selectedVal.length; i++) {
+            function innerFunc(i) {
+                setTimeout(function () {
+                    location.href = selectedVal[i];
+                }, i * 2000);
+            }
+            innerFunc(i);
+        }
+    }
+
+    function CityDropDawn(Id) {
+        var CitydataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: '@Url.Action("GetCitys", "Home")',
+                    dataType: "json",
+                    data: {
+                        StateId: Id
+                    }
+                }
+            }
+        });
+
+        $("#cityDDL").kendoDropDownList({
+            optionLabel: '--Select City--',
+            dataSource: CitydataSource,
+            dataTextField: "Name",
+            dataValueField: "CityId"
+        });
+    }
+
+    function StateDropDawn(Id) {
+        var StatedataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: '@Url.Action("GetStates", "Home")',
+                    dataType: "json",
+                    data: {
+                        ContryId: Id
+                    }
+                }
+            }
+        });
+
+        $("#stateDDL").kendoDropDownList({
+            optionLabel: '--Select State--',
+            dataSource: StatedataSource,
+            dataTextField: "Name",
+            dataValueField: "StateId",
+            change: function (e) {
+                var value = this.value();
+                $("#cityDDL").show();
+                CityDropDawn(value);
+            }
+        });
+    }
+
+    function ContryDropDawn() {
+        var ContrydataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: '@Url.Action("GetContrys", "Home")',
+                    dataType: "json"
+                }
+            }
+        });
+
+        $("#contryDDL").kendoDropDownList({
+            optionLabel:'--Select Contry--',
+            dataSource: ContrydataSource,
+            dataTextField: "Name",
+            dataValueField: "CountryId",
+            change: function (e) {
+                var value = this.value();
+                $("#stateDDL").show();
+                StateDropDawn(value);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $('#SubmitBtn').attr("disabled", true)
+        $("#stateDDL").hide();
+        $("#cityDDL").hide();
+
+        $('#DOB').datepicker({
+            format: 'dd/mm/yyyy',
+            endDate: new Date(),
+            changeMonth: true,
+            changeYear: true
+        }).on("changeDate", function (e) {
+            var age = get_age($('#DOB').val(), new Date());
+            if (age >= 18) {
+                $('#SubmitBtn').attr("disabled", false);
+            } else {
+                $('#SubmitBtn').attr("disabled", true);
+            }
+        });
+
+        ContryDropDawn();
+    });
+</script>
