@@ -149,5 +149,21 @@ namespace EmployeeDirectory.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("api/GetEmployee")]
+        public Employee GetEmployee(int Id)
+        {
+            try
+            {
+                var employee = _employeeSevices.GetEmployeeById(Id);
+
+                return employee;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
     }
 }

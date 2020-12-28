@@ -3,7 +3,7 @@
 }
 
 <div class="row mx-md-n5">
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    <button type="button" id="popupBtn" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
         Add Employee
     </button>
     <div class="col-md-12">
@@ -183,6 +183,85 @@
         });
     }
 
+    function BindGrid() {
+        //Start Datatable
+        $('#mainGrid').DataTable({
+            "sAjaxSource": "/Home/GetEmployeeList",
+            "bServerSide": true,
+            "bProcessing": true,
+            "bSearchable": true,
+            "order": [[0, 'asc']],
+            "language": {
+                "emptyTable": "No record found.",
+                "processing":
+                    '<i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#2a2b2b;"></i><span class="sr-only">Loading...</span> '
+            },
+            "columns": [
+                { "data": "FirstName", "autoWidth": true, "searchable": true },
+                { "data": "LastName", "autoWidth": true, "searchable": true },
+                { "data": "Email", "autoWidth": true, "searchable": true },
+                { "data": "Address", "autoWidth": true, "searchable": true },
+                { "data": "Gender", "autoWidth": true, "searchable": true },
+                { "data": "Birthdate", "autoWidth": true, "searchable": true },
+                { "data": "salary", "autoWidth": true, "searchable": true },
+                { "data": "MaritalStatus", "autoWidth": true },
+                {
+                    "data": function (o) {
+                        return "<a href='#' onclick='EditEmp(" + o.Id + ")' class='btn btn-info'><i class='fa fa-pencil'></i></a> <a href='#' onclick='DeleteEmp(" + o.Id + ")' class='btn btn-info'><i class='fa fa-trash'></i></a>";
+                    }
+                }
+            ],
+        });
+        //End Datatable
+    }
+
+    function EditEmp(Id) {
+        $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetEmployee", "Home")",
+                data: {
+                    Id: Id
+                },
+                success: function (result) {
+                    var obj=JSON.parse(result);
+                    console.log(obj);
+                    $("#FirstName").val(obj.FirstName);
+                    $("#LastName").val(obj.LastName);
+                    $("#EmailAddress").val(obj.Email);
+                    $("#Password").val(obj.Password);
+                    $("#ZipCode").val(obj.Zipcode);
+                    $("#Salary").val(obj.salary);
+                    $("#Address").val(obj.Address);
+                    $("#popupBtn").click();
+                },
+                error: function (result) {
+                    console.log('error');
+                }
+            });
+    }
+
+    function DeleteEmp(Id) {
+        var yes = confirm("Are you sure you want to remove employee!!.");
+        if (yes) {
+            console.log(Id);
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("DeleteEmployee", "Home")",
+                data: {
+                    Id: Id
+                },
+                success: function (result) {
+                    BindGrid();
+                },
+                error: function (result) {
+                    console.log('error');
+                }
+            });
+        } else {
+            console.log("You pressed Cancel!");
+        }
+    }
+
     $(document).ready(function () {
         $('#SubmitBtn').attr("disabled", true)
         $("#stateDDL").hide();
@@ -204,34 +283,6 @@
 
         ContryDropDawn();
 
-        //Start Datatable
-        $('#mainGrid').DataTable({
-            "sAjaxSource": "/Home/GetEmployeeList",
-            "bServerSide": true,
-            "bProcessing": true,
-            "bSearchable": true,
-            "order": [[1, 'asc']],
-            "language": {
-                "emptyTable": "No record found.",
-                "processing":
-                    '<i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#2a2b2b;"></i><span class="sr-only">Loading...</span> '
-            }, 
-            "columns": [
-                { "data": "FirstName", "autoWidth": true, "searchable": true},
-                { "data": "LastName", "autoWidth": true, "searchable": true},
-                { "data": "Email" , "autoWidth": true, "searchable": true},
-                { "data": "Address", "autoWidth": true, "searchable": true},
-                { "data": "Gender", "autoWidth": true, "searchable": true},
-                { "data": "Birthdate", "autoWidth": true, "searchable": true},
-                { "data": "salary", "autoWidth": true, "searchable": true},
-                { "data": "MaritalStatus", "autoWidth": true},
-                {
-                    "data": function (o) {
-                        return "<a href='/Home/Edit?Id=" + o.Id + "' class='btn btn-info'><i class='fa fa-pencil'></i></a> <a href='/Home/DeleteEmployee?Id=" + o.Id + "' class='btn btn-info'><i class='fa fa-trash'></i></a>";
-                    }
-                }
-            ],
-        });  
-        //End Datatable
+        BindGrid();
     });
 </script>

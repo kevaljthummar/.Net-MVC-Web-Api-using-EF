@@ -77,7 +77,7 @@ namespace EmployeeDirectoryUI.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpPost]
         public ActionResult DeleteEmployee(int Id)
         {
             using (var client = new HttpClient())
@@ -181,6 +181,40 @@ namespace EmployeeDirectoryUI.Controllers
             }
         }
 
+        [HttpGet]
+        public string GetEmployee(int Id)
+        {
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("https://localhost:44333/api/");
+
+                    //Called Member default GET All records  
+                    //GetAsync to send a GET request   
+                    // PutAsync to send a PUT request  
+                    var responseTask = client.GetAsync("GetEmployee?Id=" + Id);
+                    responseTask.Wait();
+
+                    //To store result of web api response.   
+                    var result = responseTask.Result;
+                    if (result.IsSuccessStatusCode)
+                    {
+                        var jsonString = result.Content.ReadAsStringAsync().Result;
+                        return jsonString;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public ActionResult GetEmployeeList(JqueryDatatableParam param)
         {
             try
@@ -208,6 +242,30 @@ namespace EmployeeDirectoryUI.Controllers
                                                           || x.salary.ToString().Contains(param.sSearch.ToLower())
                                                           || x.Birthdate.ToString("dd'/'MM'/'yyyy").ToLower().Contains(param.sSearch.ToLower())).ToList();
                         }
+
+                        var sortColumnIndex = Convert.ToInt32(HttpContext.Request.QueryString["iSortCol_0"]);
+                        var sortDirection = HttpContext.Request.QueryString["sSortDir_0"];
+
+                        //if (sortColumnIndex == 3)
+                        //{
+                        //    employees = sortDirection == "asc" ? employees.OrderBy(c => c.Age) : employees.OrderByDescending(c => c.Age);
+                        //}
+                        //if (sortColumnIndex == 6)
+                        //{
+                        //    employees = sortDirection == "asc" ? employees.OrderBy(c => c.Birthdate) : employees.OrderByDescending(c => c.Birthdate);
+                        //}
+                        //else if (sortColumnIndex == 7)
+                        //{
+                        //    employees = sortDirection == "asc" ? employees.OrderBy(c => c.salary) : employees.OrderByDescending(c => c.salary);
+                        //}
+                        //else
+                        //{
+                        //    Func<Employee, string> orderingFunction = e => sortColumnIndex == 0 ? e.FirstName :
+                        //                                                   sortColumnIndex == 1 ? e.LastName:
+                        //                                                   e.Email;
+
+                        //    employees = sortDirection == "asc" ? employees.OrderBy(orderingFunction) : employees.OrderByDescending(orderingFunction);
+                        //}
 
                         var displayResult = employees.Skip(param.iDisplayStart)
                                                 .Take(param.iDisplayLength).ToList();
