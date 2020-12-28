@@ -6,7 +6,23 @@
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
         Add Employee
     </button>
-    <div id="grid"></div>
+    <div class="col-md-12">
+        <table id="mainGrid" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Gender</th>
+                    <th scope="col">DOB</th>
+                    <th scope="col">Salary</th>
+                    <th scope="col">Marital Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
 </div>
 
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -187,5 +203,35 @@
         });
 
         ContryDropDawn();
+
+        //Start Datatable
+        $('#mainGrid').DataTable({
+            "sAjaxSource": "/Home/GetEmployeeList",
+            "bServerSide": true,
+            "bProcessing": true,
+            "bSearchable": true,
+            "order": [[1, 'asc']],
+            "language": {
+                "emptyTable": "No record found.",
+                "processing":
+                    '<i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#2a2b2b;"></i><span class="sr-only">Loading...</span> '
+            }, 
+            "columns": [
+                { "data": "FirstName", "autoWidth": true, "searchable": true},
+                { "data": "LastName", "autoWidth": true, "searchable": true},
+                { "data": "Email" , "autoWidth": true, "searchable": true},
+                { "data": "Address", "autoWidth": true, "searchable": true},
+                { "data": "Gender", "autoWidth": true, "searchable": true},
+                { "data": "Birthdate", "autoWidth": true, "searchable": true},
+                { "data": "salary", "autoWidth": true, "searchable": true},
+                { "data": "MaritalStatus", "autoWidth": true},
+                {
+                    "data": function (o) {
+                        return "<a href='/Home/Edit?Id=" + o.Id + "' class='btn btn-info'><i class='fa fa-pencil'></i></a> <a href='/Home/DeleteEmployee?Id=" + o.Id + "' class='btn btn-info'><i class='fa fa-trash'></i></a>";
+                    }
+                }
+            ],
+        });  
+        //End Datatable
     });
 </script>

@@ -61,7 +61,20 @@ namespace EmployeeDirectory.Services
         {
             Employee employee = new Employee()
             {
-
+                FirstName = emp.FirstName,
+                LastName = emp.LastName,
+                Email = emp.Email,
+                Birthdate = emp.Birthdate,
+                Password = emp.Password,
+                salary = emp.salary,
+                Address = emp.Address,
+                Country = emp.Country,
+                State = emp.State,
+                City = emp.City,
+                Zipcode = emp.Zipcode,
+                MaritalStatus = emp.MaritalStatus,
+                Gender = emp.Gender,
+                Images = emp.Images
             };
             db.Employees.Add(employee);
             db.SaveChanges();
@@ -73,6 +86,19 @@ namespace EmployeeDirectory.Services
 
             //update data code
             employee.FirstName = emp.FirstName;
+            employee.LastName = emp.LastName;
+            employee.Email = emp.Email;
+            employee.Birthdate = emp.Birthdate;
+            employee.Password = emp.Password;
+            employee.salary = emp.salary;
+            employee.Address = emp.Address;
+            employee.Country = emp.Country;
+            employee.State = emp.State;
+            employee.City = emp.City;
+            employee.Zipcode = emp.Zipcode;
+            employee.MaritalStatus = emp.MaritalStatus;
+            employee.Gender = emp.Gender;
+            employee.Images = emp.Images;
             //update data code
 
             db.Entry(employee).State = EntityState.Modified;

@@ -133,5 +133,21 @@ namespace EmployeeDirectory.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("api/GetEmployees")]
+        public IList<Employee> GetEmployees()
+        {
+            try
+            {
+                var employees = _employeeSevices.GetAllEmployees();
+
+                return employees.ToList();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
     }
 }

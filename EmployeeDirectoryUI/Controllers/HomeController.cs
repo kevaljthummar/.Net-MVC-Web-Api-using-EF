@@ -49,7 +49,7 @@ namespace EmployeeDirectoryUI.Controllers
                 State = Convert.ToInt32(stateDDL),
                 City = Convert.ToInt32(cityDDL),
                 Zipcode = ZipCode,
-                MaritalStatus = MaritalStatus == "ok" ? true : false,
+                MaritalStatus = MaritalStatus == "on" ? true : false,
                 Gender = gender,
                 Images = Image
             };
@@ -181,5 +181,57 @@ namespace EmployeeDirectoryUI.Controllers
             }
         }
 
+        public ActionResult GetEmployeeList(JqueryDatatableParam param)
+        {
+            try
+            {
+                List<Employee> List = new List<Employee>();
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("https://localhost:44333/api/");
+
+                    var responseTask = client.GetAsync("GetEmployees");
+                    responseTask.Wait();
+
+                    var result = responseTask.Result;
+                    if (result.IsSuccessStatusCode)
+                    {
+                        var employees = result.Content.ReadAsAsync<List<Employee>>().Result;
+
+                        if (!string.IsNullOrEmpty(param.sSearch))
+                        {
+                            employees = employees.Where(x => x.FirstName.ToLower().Contains(param.sSearch.ToLower())
+                                                          || x.LastName.ToLower().Contains(param.sSearch.ToLower())
+                                                          || x.Email.ToLower().Contains(param.sSearch.ToLower())
+                                                          || x.Address.ToString().Contains(param.sSearch.ToLower())
+                                                          || x.Gender.ToString().Contains(param.sSearch.ToLower())
+                                                          || x.salary.ToString().Contains(param.sSearch.ToLower())
+                                                          || x.Birthdate.ToString("dd'/'MM'/'yyyy").ToLower().Contains(param.sSearch.ToLower())).ToList();
+                        }
+
+                        var displayResult = employees.Skip(param.iDisplayStart)
+                                                .Take(param.iDisplayLength).ToList();
+
+                        var totalRecords = employees.Count();
+
+                        return Json(new
+                        {
+                            param.sEcho,
+                            iTotalRecords = totalRecords,
+                            iTotalDisplayRecords = totalRecords,
+                            aaData = displayResult
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
