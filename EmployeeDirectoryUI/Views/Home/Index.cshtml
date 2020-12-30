@@ -203,12 +203,30 @@
                 { "data": "Email", "autoWidth": true, "searchable": true },
                 { "data": "Address", "autoWidth": true, "searchable": true },
                 { "data": "Gender", "autoWidth": true, "searchable": true },
-                { "data": "Birthdate", "autoWidth": true, "searchable": true },
+                //{
+                //    "data": "Birthdate",
+                //    "autoWidth": true,
+                //    "searchable": true,
+                //    "render": function (data) {
+                //        console.log(data);
+                //        var date = new Date(data.Birthdate);
+                //        var month = date.getMonth() + 1;
+                //        return (month.toString().length > 1 ? month : "0" + month) + "/" + date.getDate() + "/" + date.getFullYear();
+                //    }
+                //},
+                {
+                    "data": function (data) {
+                        console.log(data.Birthdate);
+                        var date = new Date(data.Birthdate);
+                        var month = date.getMonth() + 1;
+                        return (month.toString().length > 1 ? month : "0" + month) + "/" + date.getDate() + "/" + date.getFullYear();
+                    }
+                },
                 { "data": "salary", "autoWidth": true, "searchable": true },
                 { "data": "MaritalStatus", "autoWidth": true },
                 {
                     "data": function (o) {
-                        return "<a href='#' onclick='EditEmp(" + o.Id + ")' class='btn btn-info'><i class='fa fa-pencil'></i></a> <a href='#' onclick='DeleteEmp(" + o.Id + ")' class='btn btn-info'><i class='fa fa-trash'></i></a>";
+                        return "<a href='#' onclick='EditEmp(" + o.Id + ")' class='btn btn-info'><i class='fa fa-pencil'></i></a> <a href='#' onclick='DeleteEmp(" + o.Id + ")' class='btn btn-danger'><i class='fa fa-trash'></i></a>";
                     }
                 }
             ],
@@ -237,18 +255,20 @@
 
         if ($("#contryDDL").data("kendoDropDownList") != undefined) {
             $("#contryDDL").data("kendoDropDownList").select(-1);
-            $("#contryDDL").data("kendoDropDownList").destroy();
+            //$("#contryDDL").data("kendoDropDownList").destroy();
         }
         if ($("#stateDDL").data("kendoDropDownList") != undefined) {
+            //$("#stateDDL").data("kendoDropDownList").hide();
             $("#stateDDL").data("kendoDropDownList").select(-1);
             $("#stateDDL").data("kendoDropDownList").destroy();
         }
         if ($("#cityDDL").data("kendoDropDownList") != undefined) {
+            //$("#cityDDL").data("kendoDropDownList").hide();
             $("#cityDDL").data("kendoDropDownList").select(-1);
             $("#cityDDL").data("kendoDropDownList").destroy();
         }
 
-        ContryDropDawn();
+        //ContryDropDawn();
     });
 
     function EditEmp(Id) {
@@ -294,7 +314,7 @@
                     if (obj.City > 0) {
                         setTimeout(function () {
                             $("#cityDDL").data("kendoDropDownList").select(obj.City);
-                        },1000);
+                        },3000);
                     }
 
                     $('#exampleModal').modal('show');

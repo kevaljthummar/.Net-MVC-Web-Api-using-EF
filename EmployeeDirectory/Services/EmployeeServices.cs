@@ -38,9 +38,9 @@ namespace EmployeeDirectory.Services
 
         public List<Employee> GetAllEmployees()
         {
-            var result = (from e in db.Employees
-                          select e).ToList();
-            return result;
+            var result = db.Employees;
+
+            return result.ToList();
         }
 
         public Employee GetEmployeeByEmail(string email)

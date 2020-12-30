@@ -135,7 +135,7 @@ namespace EmployeeDirectory.Controllers
 
         [HttpGet]
         [Route("api/GetEmployees")]
-        public IList<Employee> GetEmployees()
+        public IEnumerable<object> GetEmployees()
         {
             try
             {
