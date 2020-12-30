@@ -30,6 +30,7 @@
         <div class="modal-content">
             @using (Html.BeginForm("Submit", "Home", FormMethod.Post))
             {
+                <input type="hidden" id="EmpId" name="EmpId" />
                 <input type="hidden" id="formtype" name="formtype" value="save" />
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Add/Edit Detail</h5>
@@ -215,6 +216,41 @@
         //End Datatable
     }
 
+    $("#exampleModal").on("hidden.bs.modal", function () {
+        $("#EmpId").val(0);
+        $("#formtype").val("Save");
+        $("#FirstName").val('');
+        $("#LastName").val('');
+        $("#EmailAddress").val('');
+        $("#Password").val('');
+        $("#ZipCode").val('');
+        $("#Salary").val('');
+        $("#Address").val('');
+
+        $('#MaritalStatus').prop('checked', false);
+
+        $("input[name=gender][value='M']").prop("checked", true);
+
+        var $datepicker = $('#DOB');
+        $datepicker.datepicker();
+        $datepicker.datepicker('setDate', '');
+
+        if ($("#contryDDL").data("kendoDropDownList") != undefined) {
+            $("#contryDDL").data("kendoDropDownList").select(-1);
+            $("#contryDDL").data("kendoDropDownList").destroy();
+        }
+        if ($("#stateDDL").data("kendoDropDownList") != undefined) {
+            $("#stateDDL").data("kendoDropDownList").select(-1);
+            $("#stateDDL").data("kendoDropDownList").destroy();
+        }
+        if ($("#cityDDL").data("kendoDropDownList") != undefined) {
+            $("#cityDDL").data("kendoDropDownList").select(-1);
+            $("#cityDDL").data("kendoDropDownList").destroy();
+        }
+
+        ContryDropDawn();
+    });
+
     function EditEmp(Id) {
         $.ajax({
                 type: "GET",
@@ -225,6 +261,8 @@
                 success: function (result) {
                     var obj=JSON.parse(result);
                     console.log(obj);
+                    $("#EmpId").val(Id);
+                    $("#formtype").val("Edit");
                     $("#FirstName").val(obj.FirstName);
                     $("#LastName").val(obj.LastName);
                     $("#EmailAddress").val(obj.Email);
@@ -232,7 +270,35 @@
                     $("#ZipCode").val(obj.Zipcode);
                     $("#Salary").val(obj.salary);
                     $("#Address").val(obj.Address);
-                    $("#popupBtn").click();
+
+                    var $datepicker = $('#DOB');
+                    $datepicker.datepicker();
+                    $datepicker.datepicker('setDate', new Date(obj.Birthdate));
+
+                    if (obj.MaritalStatus) {
+                        $('#MaritalStatus').prop('checked', true);
+                    }
+
+                    $("input[name=gender][value='" + obj.Gender + "']").prop("checked", true);
+
+                    if(obj.Country > 0){
+                        $("#contryDDL").data("kendoDropDownList").select(obj.Country);
+                        StateDropDawn(obj.Country);
+                    }
+                    if (obj.State > 0) {
+                        setTimeout(function () {
+                            $("#stateDDL").data("kendoDropDownList").select(obj.State);
+                            CityDropDawn(obj.State);
+                        },500);
+                    }
+                    if (obj.City > 0) {
+                        setTimeout(function () {
+                            $("#cityDDL").data("kendoDropDownList").select(obj.City);
+                        },1000);
+                    }
+
+                    $('#exampleModal').modal('show');
+                    //$('#exampleModal').modal('hide');
                 },
                 error: function (result) {
                     console.log('error');
@@ -251,7 +317,8 @@
                     Id: Id
                 },
                 success: function (result) {
-                    BindGrid();
+                    //BindGrid();
+                    console.log('Deleted Success.');
                 },
                 error: function (result) {
                     console.log('error');

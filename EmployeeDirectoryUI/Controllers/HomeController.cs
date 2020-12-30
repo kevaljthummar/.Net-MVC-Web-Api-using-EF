@@ -20,6 +20,7 @@ namespace EmployeeDirectoryUI.Controllers
         [HttpPost]
         public ActionResult Submit(FormCollection collection)
         {
+            string EmpId = collection.Get("EmpId");
             string FormType = collection.Get("formtype");
             string FirstName = collection.Get("FirstName");
             string LastName = collection.Get("LastName");
@@ -53,6 +54,9 @@ namespace EmployeeDirectoryUI.Controllers
                 Gender = gender,
                 Images = Image
             };
+
+            if (FormType == "Edit")
+                employee.Id = Convert.ToInt32(EmpId);
 
             using (var client = new HttpClient())
             {
